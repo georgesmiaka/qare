@@ -95,7 +95,6 @@ class DBConfigTest {
 
     @Test
     void db_enforces_check_constraint_amount_nonNegative() {
-        // Bypass DBConfig.validate to prove the DB constraint exists.
         assertThatThrownBy(() ->
                 jdbc.update("INSERT INTO supplies (name, amount, \"unitName\") VALUES (?,?,?)",
                         "DBBad", -5, "unit"))
