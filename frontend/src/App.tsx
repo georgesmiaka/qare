@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+import type { Supply } from './model/supply_model'
+import { getAll, createOne, updateOne, removeOne } from './controller/supplies_client'
+import SupplyForm from './view/supplyForm_view'
+import SuppliesList from './view/supplyList_view'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [items, setItems] = useState<Supply[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const load = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await getAll()
+      setItems(data)
+    } catch (e: any) {
+      setError(e.message ?? 'Failed to load')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [])
+
+  const upsert = async (s: Supply) => {
+    // If it exists, update; else create
+    const exists = items.some(i => i.name === s.name)
+    if (exists) await updateOne(s)
+    else await createOne(s)
+    await load()
+  }
+
+  const remove = async (name: string) => {
+    await removeOne(name)
+    await load()
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ maxWidth: 900, margin: '2rem auto', padding: '0 1rem', display: 'grid', gap: 24 }}>
+      <h1>Qare Supplies</h1>
+      <SupplyForm onSubmit={upsert} />
+      {loading ? <p>Loading…</p> : error ? <p style={{ color: 'crimson' }}>{error}</p> : <SuppliesList items={items} onDelete={remove} />}
+    </div>
   )
 }
-
-export default App
