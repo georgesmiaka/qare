@@ -3,60 +3,51 @@ package com.qare.app.service;
 import com.qare.app.config.DBConfig;
 import com.qare.app.model.MedicalSupply;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class QareService {
     private final DBConfig db;
-    public QareService(DBConfig db) {
-        this.db = db;
-    }
+    public QareService(DBConfig db) { this.db = db; }
 
     public MedicalSupply add(MedicalSupply medicalSupply) {
-        try {
-            MedicalSupply normalized = new MedicalSupply(
-                    medicalSupply.name().trim(),
-                    medicalSupply.amount(),
-                    medicalSupply.unitName().trim()
-            );
-            db.create(normalized);
-            return normalized;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        var s = normalize(medicalSupply);
+        db.create(s);
+        return s;
     }
 
+    @Transactional(readOnly = true)
     public List<MedicalSupply> readAll() {
-        try {
-            return db.readAll();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return db.readAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<MedicalSupply> read(String name) {
-        try {
-            return db.read(name);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return db.read(normalizeName(name));
     }
 
     public boolean update(MedicalSupply supply) {
-        try {
-            return db.update(supply);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return db.update(normalize(supply));
     }
 
     public boolean delete(String name) {
-        try {
-            return db.delete(name);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return db.delete(normalizeName(name));
+    }
+
+    private static MedicalSupply normalize(MedicalSupply s) {
+        if (s == null) throw new IllegalArgumentException("MedicalSupply must not be null");
+        return new MedicalSupply(
+                s.name() == null ? null : s.name().strip(),
+                s.amount(),
+                s.unitName() == null ? null : s.unitName().strip()
+        );
+    }
+    private static String normalizeName(String name) {
+        if (name == null) throw new IllegalArgumentException("name must not be null");
+        return name.strip();
     }
 }
