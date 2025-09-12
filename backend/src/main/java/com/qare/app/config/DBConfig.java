@@ -22,7 +22,6 @@ public class DBConfig {
 
     @PostConstruct
     public void initDB() {
-        // name is the primary key here (string); amount must be non-negative
         jdbc.execute("""
             CREATE TABLE IF NOT EXISTS supplies (
                 name VARCHAR(255) PRIMARY KEY,
@@ -34,7 +33,7 @@ public class DBConfig {
 
     public void create(MedicalSupply s) {
         validate(s);
-        // will throw if name already exists (PK violation)
+
         jdbc.update("""
             INSERT INTO supplies (name, amount, "unitName") VALUES (?,?,?)
         """, s.name(), s.amount(), s.unitName());
