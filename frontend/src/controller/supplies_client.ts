@@ -6,6 +6,16 @@ export async function getAll(): Promise<Supply[]> {
   return r.json()
 }
 
+export async function getOne(name: string): Promise<Supply | null> {
+  const r = await fetch(`/api/supplies/${encodeURIComponent(name)}`)
+  if (r.status === 404) return null
+  if (!r.ok) {
+    const txt = await r.text()
+    throw new Error(`Fetch failed: ${r.status} ${txt}`)
+  }
+  return r.json()
+}
+
 export async function createOne(s: Supply): Promise<Supply> {
   const r = await fetch('/api/supplies', {
     method: 'POST',
