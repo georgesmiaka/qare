@@ -1,3 +1,10 @@
 package com.qare.app.model;
 
-public record MedicalSupply(String name, int amount, String unitName) {}
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+public record MedicalSupply(
+        @NotBlank String name,
+        @Min(0) int amount,
+        @NotBlank String unitName
+) {}
