@@ -31,7 +31,7 @@ Qare is a simple full-stack app to track medical supplies. The backend exposes a
 │  ├─ src/main/java/com/qare/app
 │  │  ├─ controller/QareController.java
 │  │  ├─ service/QareService.java
-│  │  ├─ config/DBConfig.java
+│  │  ├─ config/{DBConfig, CorsConfig}.java
 │  │  └─ model/MedicalSupply.java
 │  └─ src/main/resources/application.yml
 ├─ frontend/                     # React UI
@@ -39,7 +39,7 @@ Qare is a simple full-stack app to track medical supplies. The backend exposes a
 │  │  ├─ controller/supplies_client.ts
 │  │  ├─ view/
 │  │  │  └─ components/{SupplyForm, SupplyTable}.tsx
-│  │  ├─ pages/{Home,Store,Admin,Search}.tsx
+│  │  │  └─ pages/{Home,Store,Admin,Search}.tsx
 │  │  ├─ model/supply_model.ts
 │  │  └─ App.tsx
 │  └─ vite.config.ts
