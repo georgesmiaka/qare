@@ -6,7 +6,7 @@ export default function Home() {
       <img
         src="/home.PNG"
         alt="Qare preview"
-        style={{ width: '100%', maxWidth: 900, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+        style={{ width: '100%', maxWidth: 500, maxHeight:500, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
       />
     </section>
   )
